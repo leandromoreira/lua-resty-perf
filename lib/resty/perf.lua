@@ -47,7 +47,7 @@ _M.perf_time = function(description, fn, result_cb, config)
   ngx_update_time()
   local elapsed_time =   -- we'd pass this value to result_cb: configurable
 
-  result_cb((ngx.now() - start)/N, ":: " .. description .. " :: took %.8f seconds")
+  result_cb((ngx.now() - start)/N, ":: " .. description .. " :: took %.8f seconds per operation")
 
   if disable_gc then collectgarbage("restart") end
 end

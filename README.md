@@ -21,8 +21,10 @@ perf.perf_mem("mycode memory profiling", function()
    mycode()
 end)
 ```
-It'll show:
+To run it, you can use the openresty docker image:
+
 ```bash
-:: mycode cpu profiling :: took 0.00000818 seconds per operation
-:: mycode memory profiling :: used 8 kb
+docker run -it --rm -v ${PWD}/test.lua:/test.lua -v ${PWD}/lib/resty/perf.lua:/lib/resty/perf.lua openresty/openresty:xenial resty /test.lua
 ```
+
+![perf command line result](example.jpg "A graph with experiments results")

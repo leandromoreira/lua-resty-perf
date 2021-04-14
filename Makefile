@@ -1,5 +1,5 @@
 bench:
-	docker run -it --rm -v ${PWD}/example.lua:/example.lua -v ${PWD}/lib/resty/perf.lua:/lib/resty/perf.lua openresty/openresty:xenial resty /example.lua
+	docker run -it --rm -v ${PWD}/test.lua:/test.lua -v ${PWD}/lib/resty/perf.lua:/lib/resty/perf.lua openresty/openresty:xenial resty /test.lua
 
 build-test:
 	docker-compose build test

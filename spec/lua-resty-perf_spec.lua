@@ -1,7 +1,7 @@
-package.path = package.path .. ";lib/resty/?.lua;spec/?.lua"
+package.path = package.path .. ";lib/?.lua;spec/?.lua"
 
 -- in your code you should use: local perf = require "lua-resty-perf"
-local perf = require "perf"
+local perf = require "resty.perf"
 
 local function mycode()
   local x = {}

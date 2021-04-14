@@ -1,5 +1,5 @@
 local _M     = {
-    _VERSION = "1.0.2-0",
+    _VERSION = "1.0.4-0",
     _AUTHOR  = "Leandro Moreira",
     _LICENSE = "BSD-3-Clause License",
     _URL     = "https://github.com/leandromoreira/lua-resty-perf",

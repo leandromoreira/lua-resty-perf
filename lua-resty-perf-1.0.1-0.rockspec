@@ -1,8 +1,8 @@
 package = "lua-resty-perf"
-version = "1.0.0"
+version = "1.0.1-0"
 source = {
   url = "git://github.com/leandromoreira/lua-resty-perf",
-  tag = "1.0.0"
+  tag = "1.0.1"
 }
 description = {
   summary  = "A simple resty lua library to benchmark memory and throughput of a function.",

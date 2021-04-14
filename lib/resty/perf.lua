@@ -1,5 +1,5 @@
 local _M     = {
-    _VERSION = "1.0.0",
+    _VERSION = "1.0.1-0",
     _AUTHOR  = "Leandro Moreira",
     _LICENSE = "BSD-3-Clause License",
     _URL     = "https://github.com/leandromoreira/lua-resty-perf",
@@ -8,16 +8,27 @@ local _M     = {
 local ngx_update_time = ngx.update_time
 local ngx_now = ngx.now
 
-_M.new = function(opts)
+_M.setup = function(opts)
   opts = opts or {}
-   _M.result_cb               = opts.result_cb or function(value, fmt_msg) -- function called after the test, its default behavior is to print to the sdtdout
-      print(string.format(fmt_msg, value))
-    end
-   _M.luajit_warmup_loop      = opts.luajit_warmup_loop or 100 -- the number of execution to promote the code for the jit
-   _M.disable_gc_during_tests = opts.disable_gc_during_tests or true -- disable gc during tests
-   _M.N                       = opts.N or 1e5 -- times to run the tests
-   return _M
+  _M.result_cb               = opts.result_cb or _M.result_cb
+  _M.luajit_warmup_loop      = opts.luajit_warmup_loop or _M.luajit_warmup_loop
+  _M.disable_gc_during_tests = opts.disable_gc_during_tests or _M.disable_gc_during_tests
+  _M.N                       = opts.N or _M.N
 end
+
+_M.default_opt = function()
+  local opts = {}
+  opts.result_cb = function(value, fmt_msg) -- function called after the test, its default behavior is to print to the sdtdout
+    print(string.format(fmt_msg, value))
+  end
+  opts.luajit_warmup_loop = 100 -- the number of execution to promote the code for the jit
+  opts.disable_gc_during_tests = true -- disable gc during tests
+  opts.N = 1e5 -- times to run the tests
+  return opts
+end
+
+-- setting the default options
+_M.setup(_M.default_opt())
 
 _M.perf_time = function(description, fn, result_cb, config)
   if description == nil then error("perf_time(description, fn): you must pass the description") end

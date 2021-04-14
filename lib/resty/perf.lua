@@ -5,8 +5,16 @@ local _M     = {
     _URL     = "https://github.com/leandromoreira/lua-resty-perf",
 }
 
-local ngx_update_time = ngx.update_time
-local ngx_now = ngx.now
+local ngx_update_time = function()
+end
+local ngx_now = function()
+  return os.time()
+end
+
+if ngx then
+  ngx_update_time = ngx.update_time
+  ngx_now = ngx.now
+end
 
 _M.setup = function(opts)
   opts = opts or {}
@@ -42,7 +50,7 @@ _M.perf_time = function(description, fn, result_cb, config)
   local N = config.N or _M.N
 
   -- warming up lua jit
-  for i = 1, jit_loop do
+  for _ = 1, jit_loop do
     fn()
   end
 
@@ -51,14 +59,13 @@ _M.perf_time = function(description, fn, result_cb, config)
   ngx_update_time()
 
   local start = ngx_now() -- ms precision
-  for i = 1, N do
+  for _ = 1, N do
     fn()
   end
 
   ngx_update_time()
-  local elapsed_time =   -- we'd pass this value to result_cb: configurable
 
-  result_cb((ngx.now() - start)/N, ":: " .. description .. " :: took %.8f seconds per operation")
+  result_cb((ngx_now() - start)/N, ":: " .. description .. " :: took %.8f seconds per operation")
 
   if disable_gc then collectgarbage("restart") end
 end

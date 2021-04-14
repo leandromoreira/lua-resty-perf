@@ -1,0 +1,20 @@
+version: '2.1'
+
+services:
+  test:
+    command: busted
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      - ".:/lua/"
+    working_dir: "/lua"
+
+  lint:
+    command: bash -c "luacheck -q ."
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      - ".:/lua/"
+    working_dir: "/lua"

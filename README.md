@@ -13,8 +13,6 @@ local function mycode()
   return x
 end
 
-local perf = perfresty.new()
-
 perf.perf_time("mycode cpu profiling", function()
    mycode()
 end)

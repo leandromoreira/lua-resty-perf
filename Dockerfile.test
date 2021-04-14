@@ -10,7 +10,7 @@ RUN apt-get update \
     && luarocks install luacov \
     && luarocks install luacov-coveralls \
     && luarocks install busted \
-    && luarocks install lua-resty-perf
+    && luarocks install lua-resty-perf 1.0.2-0
 
 CMD ["busted"]
 

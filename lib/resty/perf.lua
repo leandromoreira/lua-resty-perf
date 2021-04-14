@@ -5,15 +5,21 @@ local _M     = {
     _URL     = "https://github.com/leandromoreira/lua-resty-perf",
 }
 
-local ngx_update_time = function()
+local _update_time = function()
 end
-local ngx_now = function()
+local _now = function()
   return os.clock()
 end
 
+-- when available, it uses openresty env
 if ngx then
-  ngx_update_time = ngx.update_time
-  ngx_now = ngx.now
+  if ngx.update_time then
+    _update_time = ngx.update_time
+  end
+
+  if ngx.now then
+    _now = ngx.now
+  end
 end
 
 _M.setup = function(opts)
@@ -22,6 +28,8 @@ _M.setup = function(opts)
   _M.luajit_warmup_loop      = opts.luajit_warmup_loop or _M.luajit_warmup_loop
   _M.disable_gc_during_tests = opts.disable_gc_during_tests or _M.disable_gc_during_tests
   _M.N                       = opts.N or _M.N
+  _M.now                     = opts.now or _M.now
+  _M.update_time             = opts.update_time or _M.update_time
 end
 
 _M.default_opt = function()
@@ -32,6 +40,8 @@ _M.default_opt = function()
   opts.luajit_warmup_loop = 100 -- the number of execution to promote the code for the jit
   opts.disable_gc_during_tests = true -- disable gc during tests
   opts.N = 1e5 -- times to run the tests
+  opts.now = _now
+  opts.update_time = _update_time
   return opts
 end
 
@@ -48,6 +58,8 @@ _M.perf_time = function(description, fn, result_cb, config)
   local jit_loop = config.luajit_warmup_loop or _M.luajit_warmup_loop
   local disable_gc = config.disable_gc_during_tests or _M.disable_gc_during_tests
   local N = config.N or _M.N
+  local update_time = config.update_time or _M.update_time
+  local now = config.now or _M.now
 
   -- warming up lua jit
   for _ = 1, jit_loop do
@@ -56,16 +68,16 @@ _M.perf_time = function(description, fn, result_cb, config)
 
   if disable_gc then collectgarbage("stop") end
   -- making sure time is up to date
-  ngx_update_time()
+  update_time()
 
-  local start = ngx_now() -- ms precision
+  local start = now() -- ms precision
   for _ = 1, N do
     fn()
   end
 
-  ngx_update_time()
+  update_time()
 
-  result_cb((ngx_now() - start)/N, ":: " .. description .. " :: took %.8f seconds per operation")
+  result_cb((now() - start)/N, ":: " .. description .. " :: took %.8f seconds per operation")
 
   if disable_gc then collectgarbage("restart") end
 end
@@ -76,9 +88,9 @@ _M.perf_mem = function(description, fn, result_cb, config) -- result_cb, config 
   if type(description) ~= "string" or type(fn) ~= "function" then error("perf_mem(description, fn): description is a string and fn is a function") end
 
   config = config or {}
-  collectgarbage("stop") -- disabling gc
   result_cb = result_cb or config.result_cb or _M.result_cb
 
+  collectgarbage("stop") -- disabling gc
   local start = collectgarbage("count")
 
   fn()

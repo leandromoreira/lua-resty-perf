@@ -8,7 +8,7 @@ local _M     = {
 local ngx_update_time = function()
 end
 local ngx_now = function()
-  return os.time()
+  return os.clock()
 end
 
 if ngx then

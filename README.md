@@ -13,13 +13,9 @@ local function mycode()
   return x
 end
 
-perf.perf_time("mycode cpu profiling", function()
-   mycode()
-end)
+perf.perf_time("mycode cpu profiling", mycode)
 
-perf.perf_mem("mycode memory profiling", function()
-   mycode()
-end)
+perf.perf_mem("mycode memory profiling", mycode)
 ```
 To run it, you can use the openresty docker image:
 
